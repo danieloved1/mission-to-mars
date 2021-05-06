@@ -1,0 +1,81 @@
+@startuml
+
+interface Loadable {
++ canCarry(Item) : boolean
++ carry(Item)
+}
+
+interface Dispatchable {
++ launch() : boolean
++ land() : boolean
+}
+
+class Item {
++ String name
++ int weight
++ int price
++ int getWeight()
++ int getPrice()
+}
+
+abstract class Rocket implements Dispatchable, Loadable {
++ int cost
++ int rocketWeight
++ int cargoLimit
++ int maxWeight
++ int cargo
++ ArrayList<Item> items
++ @ canCarry(Item): boolean
++ @ carry(Item)
+# chance(int): boolean
+}
+
+class U1 extends Rocket {
+- {static} int COST = 100;
+- {static} int WEIGHT = 10,000;
+- {static} int MAX_WEIGHT = 18,000;
+- {static} int LAUNCH_EXPLOSION_CHANCE = 25;
+- {static} int LAND_CRASH_CHANCE = 10;
++ @ land() : boolean
++ @ launch() : boolean
+}
+
+class U2 extends Rocket {
+- {static} int COST = 120;
+- {static} int WEIGHT = 18,000;
+- {static} int MAX_WEIGHT = 29,000;
+- {static} int LAUNCH_EXPLOSION_CHANCE = 40;
+- {static} int LAND_CRASH_CHANCE = 50;
++ @ land() : boolean
++ @ launch() : boolean
+}
+
+class Simulation {
++ {static} int totalSent;
++ {static} int totalLost;
++ {static} int totalCost;
++ {static} loadU1(ArrayList<Item>): ArrayList<U1>
++ {static} loadU2(ArrayList<Item>): ArrayList<U2>
++ {static} runSimulation(ArrayList<? extends Rocket>): int
+}
+
+class ItemParser {
+- {static} String DELIMITERS
+- {static} int NAME
+- {static} int WEIGHT
+- {static} int PRICE
++ Item parse(String record)
+}
+
+class ItemLoader {
++ String fileName
++ ArrayList<Item> loadItems()
+}
+
+U1 -down--* Simulation : load, and try to launch & land
+U2 -down--* Simulation
+ItemParser -up--* Item: Create new instance of item
+ItemLoader -right--* ItemParser: Parse each item
+Simulation -right--* ItemLoader: Load file
+
+@enduml
